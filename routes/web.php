@@ -27,7 +27,11 @@ Route::get('/', function () {
 
 Route::get('/quiz', function(){
     return Inertia::render('Quiz');
-});
+})->name('quiz');
+
+
+Route::post('/post', [QuestionFormController::class, 'addQuestion']);
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
