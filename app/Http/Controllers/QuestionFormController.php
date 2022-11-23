@@ -28,9 +28,8 @@ class QuestionFormController extends Controller
     public function addQuestion(Request $request)
     {
 
-
         if ($request['questionsFormName'] == null) {
-            return inertia('Quiz', ['isFilled' => 'Fill all fields']);
+            return inertia('Quiz', ['isFilled' => ('Fill all fields')]);
         }else{
             $QuestionForm = new QuestionForm();
             $QuestionForm->user_id = Auth::id();

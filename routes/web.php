@@ -31,7 +31,7 @@ Route::get('/', function(){
 })->middleware(['auth', 'verified'])->name('quiz');
 
 
-Route::post('/post123', [QuestionFormController::class, 'addQuestion'])->name('post');
+Route::post('/post123', [QuestionFormController::class, 'addQuestion']);
 
 
 // Route::get('/dashboard', function () {

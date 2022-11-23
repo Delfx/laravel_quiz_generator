@@ -59,9 +59,20 @@ function submit() {
         questionsFormName: questionFormName.value,
         questions: questions.value
     }
-    Inertia.post('/post123', data,{
-        preserveState: true
+    // Inertia.post('/post123', data, {
+    //     preserveState: true,
+    //     preserveScroll: true,
+    // })
+
+    Inertia.visit('/post123', {
+        method: 'post',
+        data: data,
+        replace: false,
+        preserveState: false,
+        preserveScroll: false,
     })
+
+    // this.$inertia.post('/post123', data)
 }
 
 
@@ -80,7 +91,7 @@ function submit() {
 
 
     <div class="container d-flex">
-        <form class="mx-auto col-6" @submit.prevent="submit">
+        <form class="mx-auto col-6">
             <h1>Question Maker</h1>
             <div class="form-group col-md-12 m-2">
                 <label class="m-1">Question Form name</label>
@@ -126,7 +137,7 @@ function submit() {
             <hr>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button @click="submit" type="button" class="btn btn-primary">Submit</button>
             </div>
 
         </form>
