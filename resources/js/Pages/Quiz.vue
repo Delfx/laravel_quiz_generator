@@ -2,12 +2,13 @@
 import { reactive, ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia'
 import { useForm } from '@inertiajs/inertia-vue3'
-
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
 defineProps({
     errors: Object
 })
 
+const questionFormName = ref([]);
 
 const questions = ref([
     {
@@ -32,7 +33,10 @@ const questions = ref([
     }
 ])
 
+
+
 function addQuestions() {
+
     questions.value.push({
         question: '',
         answerTrue: '',
@@ -53,6 +57,7 @@ function removeQuestions(index) {
 
 function submit() {
     const data = {
+        questionsFormName: questionFormName.value,
         questions: questions.value
     }
 
@@ -66,9 +71,24 @@ function submit() {
 
 
 <template>
+
+    <div class="tw-pt-4 tw-pb-1 tw-border-t tw-border-gray-200">
+        <div class="tw-mt-3 tw-space-y-1">
+            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
+                Log Out
+            </ResponsiveNavLink>
+        </div>
+    </div>
+
+
     <div class="container d-flex">
         <form class="mx-auto col-6">
             <h1>Question Maker</h1>
+            <div class="form-group col-md-12 m-2">
+                        <label class="m-1">Question Form name</label>
+                        <input v-model="questionFormName" :name="`questionFormName.value`" type="text"
+                            class="form-control" placeholder="Question Form name">
+                    </div>
             <div class="question-maker">
                 <div class=" mt-4 " v-for="(question, index) in questions" :key="index">
                     <div class="form-group col-md-12 m-2">
@@ -115,7 +135,3 @@ function submit() {
 </template>
 
 
-
-<style>
-
-</style>
