@@ -5,7 +5,7 @@ import { useForm } from '@inertiajs/inertia-vue3'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
 defineProps({
-    errors: Object
+    isFilled: String
 })
 
 const questionFormName = ref([]);
@@ -34,7 +34,6 @@ const questions = ref([
 ])
 
 
-
 function addQuestions() {
 
     questions.value.push({
@@ -60,10 +59,9 @@ function submit() {
         questionsFormName: questionFormName.value,
         questions: questions.value
     }
-
-    Inertia.post('/post', data)
-    //   alert(JSON.stringify(data, null, 2))
-
+    Inertia.post('/post123', data,{
+        preserveState: true
+    })
 }
 
 
@@ -82,13 +80,13 @@ function submit() {
 
 
     <div class="container d-flex">
-        <form class="mx-auto col-6">
+        <form class="mx-auto col-6" @submit.prevent="submit">
             <h1>Question Maker</h1>
             <div class="form-group col-md-12 m-2">
-                        <label class="m-1">Question Form name</label>
-                        <input v-model="questionFormName" :name="`questionFormName.value`" type="text"
-                            class="form-control" placeholder="Question Form name">
-                    </div>
+                <label class="m-1">Question Form name</label>
+                <input v-model="questionFormName" :name="`questionFormName.value`" type="text" class="form-control"
+                    placeholder="Question Form name">
+            </div>
             <div class="question-maker">
                 <div class=" mt-4 " v-for="(question, index) in questions" :key="index">
                     <div class="form-group col-md-12 m-2">
@@ -96,8 +94,6 @@ function submit() {
                         <input v-model="question.question" :name="`questions[${index}][question]`" type="text"
                             class="form-control" placeholder="Question name">
                     </div>
-
-                    <div v-if="errors.question">{{ errors.question }}</div>
 
                     <div v-for="(answer, indexAnswer) in questions[index].answers" :key="indexAnswer">
                         <div class="form-group col-md-12 m-2">
@@ -120,6 +116,8 @@ function submit() {
                 </div>
             </div>
 
+            <h2 v-if="isFilled">{{ isFilled }}</h2>
+
             <div class="form-group mt-3">
                 <button @click="addQuestions" type="button" class="btn btn-secondary">Add new question</button>
             </div>
@@ -128,9 +126,11 @@ function submit() {
             <hr>
 
             <div class="form-group">
-                <button @click="submit" type="button" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
+
         </form>
+
     </div>
 </template>
 

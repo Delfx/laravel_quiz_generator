@@ -4,6 +4,7 @@ use App\Http\Controllers\QuestionFormController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use PhpParser\Node\Expr\PostDec;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +31,7 @@ Route::get('/', function(){
 })->middleware(['auth', 'verified'])->name('quiz');
 
 
-Route::post('/post', [QuestionFormController::class, 'addQuestion']);
+Route::post('/post123', [QuestionFormController::class, 'addQuestion'])->name('post');
 
 
 // Route::get('/dashboard', function () {

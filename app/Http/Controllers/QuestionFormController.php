@@ -29,49 +29,15 @@ class QuestionFormController extends Controller
     {
 
 
-        // $question = new Question;
+        if ($request['questionsFormName'] == null) {
+            return inertia('Quiz', ['isFilled' => 'Fill all fields']);
+        }else{
+            $QuestionForm = new QuestionForm();
+            $QuestionForm->user_id = Auth::id();
+            $QuestionForm->name = $request['questionsFormName'];
+            $QuestionForm->save();
+        }
 
-        // $question->name = $request->name;
-
-        // $question->save();
-
-        // $flight->name = $request->name;
-
-        // $flight->save();
-        // $request->validate([
-        //     'question' => 'required|min:2|max:12',
-        // ]);
-
-        // $validator = Validator::make($request->all(), [
-        //     'questions.*.question' => 'min:2|max:255',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return Redirect::route('quiz')
-        //         ->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // } else {
-        //     dd($request);
-        // };
-
-        // dd(Auth::id());
-        // $data = array(
-        //     "title" => "hello",
-        //     "description" => "test test test"
-        //   );
-
-        // foreach ($questions as $data) {
-        //     dd($questions);
-        // };
-
-        $QuestionForm = new QuestionForm();
-
-        $QuestionForm->user_id = Auth::id();
-
-        $QuestionForm->name = $request['questionsFormName'];
-
-        $QuestionForm->save();
 
         // foreach ($request as $key => $value) {
         //     // dd($request['questionsFormName']);
