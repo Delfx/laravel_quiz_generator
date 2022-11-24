@@ -28,6 +28,13 @@ class QuestionFormController extends Controller
     public function addQuestion(Request $request)
     {
 
+
+        // dd($request['questionsFormName']);
+
+        $validated = $request->validate([
+            'questionsFormName' => 'required|max:255',
+        ]);
+
         if ($request['questionsFormName'] == null) {
             return inertia('Quiz', ['isFilled' => ('Fill all fields')]);
         }else{
@@ -37,7 +44,7 @@ class QuestionFormController extends Controller
             $QuestionForm->save();
         }
 
-
+        return Redirect::route('index');
         // foreach ($request as $key => $value) {
         //     // dd($request['questionsFormName']);
 

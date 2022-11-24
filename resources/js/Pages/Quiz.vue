@@ -5,7 +5,8 @@ import { useForm } from '@inertiajs/inertia-vue3'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
 defineProps({
-    isFilled: String
+    isFilled: String,
+    errors: Object,
 })
 
 const questionFormName = ref([]);
@@ -59,18 +60,21 @@ function submit() {
         questionsFormName: questionFormName.value,
         questions: questions.value
     }
-    // Inertia.post('/post123', data, {
-    //     preserveState: true,
-    //     preserveScroll: true,
-    // })
-
-    Inertia.visit('/post123', {
-        method: 'post',
-        data: data,
-        replace: false,
-        preserveState: false,
-        preserveScroll: false,
+    Inertia.post('/quiz/addQuestion', data, {
+        preserveState: true,
+        preserveScroll: true,
     })
+
+
+
+    // Inertia.visit('/post123', {
+    //     method: 'post',
+    //     data: data,
+    //     replace: false,
+    //     preserveState: false,
+    //     preserveScroll: false,
+    //     replace: false
+    // })
 
     // this.$inertia.post('/post123', data)
 }
@@ -127,7 +131,7 @@ function submit() {
                 </div>
             </div>
 
-            <h2 v-if="isFilled">{{ isFilled }}</h2>
+            <h2 v-if="errors.questionsFormName">{{ errors.questionsFormName }}</h2>
 
             <div class="form-group mt-3">
                 <button @click="addQuestions" type="button" class="btn btn-secondary">Add new question</button>
