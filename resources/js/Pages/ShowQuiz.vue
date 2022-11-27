@@ -4,26 +4,32 @@ import Navbar from '@/Components/Navbar.vue';
 import { ref } from 'vue';
 
 
-defineProps([
+const props = defineProps({
 
-    'formName',
-    'questionsName',
-    'answers'
+    formName: String,
+    questionsName: Array,
+    answers: Array,
 
-])
+})
 
-const data = ref([
+const data = ref(
 
     {
-        name: 'test'
-    }
+        formName: props.formName,
+        questionsName: props.questionsName,
+        answers: props.answers,
 
-])
+    }
+)
+
+data.value.questionsName.forEach(answer => {
+    answer.correct_answer = ''
+
+});
 
 function submit(params) {
-
-
-    console.log(data.value);
+    Inertia.post('/quiz/quiz', data.value)
+    // console.log(data.value.questionsName[0]);
 }
 
 
@@ -31,44 +37,44 @@ function submit(params) {
 
 <template>
 
-    <!-- <h3>
-        {{questionsName}}
-    </h3> -->
-
     <Navbar :login="$page.props.auth.user">
     </Navbar>
     <div class="container">
+
         <div class="d-flex flex-column align-items-center mt-3">
 
             <div class="">
                 <h1>
-                    {{ formName }}
+                    {{ data.formName }}
                 </h1>
             </div>
 
-            <div v-for="(questionName, index) in questionsName" :key="index">
+            <div v-for="(questionName, index) in data.questionsName" :key="index">
+
+                <h1>
+                    {{ questionName.correct_answer }}
+                </h1>
 
                 <div class="card mt-3" style="width: 25rem;">
                     <div class="card-body">
+
                         <h4 class="">
                             {{ questionName.name }}
                         </h4>
 
-                        <div v-for="answer in answers[index]['answer']">
-                            <div class="">
-                                <div class="form-check">
-                                    <input @click="submit" class="form-check-input" type="radio"
-                                        :name="`${questionName.name}${index}`" :id="`${answer.name}${answer.id}`">
-                                    <label class="form-check-label" :for="`${answer.name}${answer.id}`">
-                                        {{ answer.name }}
-                                    </label>
-                                </div>
+                        <div v-for="(answer, answerIndex) in data.answers[index]['answer']" :key="answerIndex">
+                            <div class="form-check">
+                                <input v-model="questionName.correct_answer" class="form-check-input"
+                                    :value="answerIndex" type="radio" :name="`flexRadioDefault${index}`"
+                                    id="flexRadioDefault">
+                                <label class="form-check-label" for="flexRadioDefault">
+                                    {{ answer.name }}
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
 
             <div class="form-group mt-5">
                 <button @click="submit" type="button" class="btn btn-primary btn-lg">Submit</button>
