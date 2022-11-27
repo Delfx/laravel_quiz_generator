@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Answer;
 use App\Models\Question;
 use App\Models\QuestionForm;
 use App\Models\User;
@@ -9,46 +10,145 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Nette\Utils\Strings;
+use Ramsey\Uuid\Type\Integer;
+use Termwind\Components\Dd;
 
 use function GuzzleHttp\Promise\all;
 
 class QuestionFormController extends Controller
 {
 
-    public function show()
+    public function allQuestion(String $id = null)
     {
+        $allQuestion = Question::where('question_form_id', $id)->get(['name'])->all();
 
-        $userComments = User::findOrFail('1')->questionForms()->get(['name']);
-
-        // dd($userComments);
-
-        return view('index', compact('userComments'));
+        return $allQuestion;
     }
+
+    public function index()
+    {
+        $questionForm = QuestionForm::where('user_id', Auth::id())->with('Questions')->get();
+
+        return Inertia::render('Index',  [
+            'allQuestionsFormsName' => QuestionForm::where('user_id', Auth::id())->get(),
+            'allQuestions' => $questionForm
+        ]);
+    }
+
 
     public function addQuestion(Request $request)
     {
 
+        $validated = $request->validate(
+            [
+                'questionsFormName' => 'required|max:255',
+                'questions.*.question' => 'required|max:255',
+                'questions.*.answers.*' => 'required|max:255'
+            ],
+            [
+                'questionsFormName.required' => 'Please fill Question Form name field',
+                'questions.*.question.required' => 'Please fill Question name field',
+                'questions.*.answers.*.required' => 'Please fill Answers field',
+            ]
+        );
 
-        // dd($request['questionsFormName']);
+        $questionForm = new QuestionForm();
+        $questionForm->user_id = Auth::id();
+        $questionForm->name = $request['questionsFormName'];
+        $questionForm->link = fake()->regexify('[a-z]{3}[0-8]{3}');
+        $questionForm->save();
 
-        $validated = $request->validate([
-            'questionsFormName' => 'required|max:255',
-        ]);
+        foreach ($request['questions'] as $key => $value) {
+            // dd($QuestionForm);
+            $question = new Question();
+            $question->question_form_id = $questionForm->id;
+            $question->name = $value['question'];
+            $question->correct_answer = $value['trueAnswer'];
+            $question->save();
 
-        if ($request['questionsFormName'] == null) {
-            return inertia('Quiz', ['isFilled' => ('Fill all fields')]);
-        }else{
-            $QuestionForm = new QuestionForm();
-            $QuestionForm->user_id = Auth::id();
-            $QuestionForm->name = $request['questionsFormName'];
-            $QuestionForm->save();
+            // dd($value['answers']);
+            foreach ($value['answers'] as $key => $formAnswer) {
+                $answer = new Answer();
+                $answer->question_id = $question->id;
+                $answer->name = $formAnswer;
+                $answer->save();
+                // dd($answer);
+            }
         }
 
+        $allQuestionsFormsName = $questionForm::where('user_id', Auth::id())->get(['name'])->all();
+
         return Redirect::route('index');
-        // foreach ($request as $key => $value) {
-        //     // dd($request['questionsFormName']);
-
-
-        // }
     }
+
+    public function editQuestion($id, Request $request)
+    {
+        $allQuestionsFormsName = QuestionForm::where('user_id', Auth::id())->where('id', $id)->get(['name']);
+        $allQuestions = Question::where('question_form_id', $id)->get();
+        $allAnswers = Question::where('question_form_id', $id)->with('Answer')->get();
+
+
+        // return Inertia::render('Quiz', [
+
+        //     'allQuestionsFormsName' => $allQuestionsFormsName,
+        //     'allQuestions' => $this->allQuestion($QuestionForm->id)
+
+        // ]);
+
+
+        // with('Questions')->get();
+
+
+
+        // $validated = $request->validate(
+        //     [
+        //         'questionsFormName' => 'required|max:255',
+        //         'questions.*.question' => 'required|max:255',
+        //         'questions.*.answers.*' => 'required|max:255'
+        //     ],
+        //     [
+        //         'questionsFormName.required' => 'Please fill Question Form name field',
+        //         'questions.*.question.required' => 'Please fill Question name field',
+        //         'questions.*.answers.*.required' => 'Please fill Answers field',
+        //     ]
+        // );
+
+        // dd($allQuestions);
+
+
+        return Inertia::render('EditQuiz', [
+            'questions' => $allQuestions
+        ]);
+    }
+
+    public function showQuestion($id)
+    {
+
+        $questionForm = QuestionForm::where('link', $id)->get();
+        $questionsName = Question::where('question_form_id', $questionForm[0]['id'])->get();
+        $answers = Question::where('question_form_id', $questionForm[0]['id'])->with('answer')->get();
+
+        // dd($answers);
+
+
+        return Inertia::render('ShowQuiz', [
+            'formName' => $questionForm[0]['name'],
+            'questionsName' => $questionsName,
+            'answers' => $answers
+        ]);
+
+
+    }
+
+
+
+     // public function show()
+    // {
+    //     $userComments = User::findOrFail('1')->questionForms()->get(['name']);
+    //     return view('index', compact('userComments'));
+    // }
+
 }

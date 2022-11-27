@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('question_id')->constrained();
             $table->text('name');
-            $table->boolean('answer');
             $table->timestamps();
         });
     }

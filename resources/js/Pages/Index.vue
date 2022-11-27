@@ -1,5 +1,5 @@
 <script setup>
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import Navbar from '@/Components/Navbar.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 
 defineProps({
@@ -7,6 +7,8 @@ defineProps({
     canRegister: Boolean,
     laravelVersion: String,
     phpVersion: String,
+    allQuestionsFormsName: Array,
+    allQuestions: Array
 })
 
 </script>
@@ -14,28 +16,34 @@ defineProps({
 
 <template>
 
-    <div v-if="$page.props.auth.user">
-        <div class="tw-pt-4 tw-pb-1 tw-border-t tw-border-gray-200">
-            <div class="tw-mt-3 tw-space-y-1">
-                <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                    Log Out
-                </ResponsiveNavLink>
+    <Navbar :login="$page.props.auth.user">
+    </Navbar>
+
+
+    <div class="container mt-5">
+
+        <Link href="/quiz" class="btn btn-success mb-4">Create quiz</Link>
+
+        <div v-if="$page.props.auth.user">
+            <div v-for="(formName, index) in allQuestionsFormsName" :key="index">
+                <div class="card mt-3 col-md-8 d-flex mx-auto">
+                    <div class="card-header">
+                        {{ formName.name }}
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{ formName.name }}</h3>
+                        <p class="card-text m-0 p-0">Questions in form: {{ allQuestions[index].questions.length }}</p>
+                        <a class="card-text" :href="`quiz/showQuestion/${formName.link}`">
+                            <p class="card-text">Link:  {{`quiz/showQuestion/${formName.link}`}}</p>
+                        </a>
+                        <a :href="`quiz/editQuestion/${formName.id}`" class="btn btn-primary mt-3">Edit</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div v-else class="row">
-        <ResponsiveNavLink :href="route('login')"
-            class="col-md-1 tw-text-sm tw-text-gray-700 dark:tw-text-gray-500 tw-underline">Log in</ResponsiveNavLink>
-
-        <ResponsiveNavLink :href="route('register')"
-            class="col-md-1 tw-text-sm tw-text-gray-700 dark:tw-text-gray-500 tw-underline">Register</ResponsiveNavLink>
-    </div>
 
 
-
-    <h1>
-        Index
-    </h1>
 
 </template>

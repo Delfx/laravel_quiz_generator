@@ -26,14 +26,7 @@ use PhpParser\Node\Expr\PostDec;
 //     ]);
 // });
 
-Route::get('/', function () {
-    return Inertia::render('Index',  [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('index');
+Route::get('/', [QuestionFormController::class, 'index'])->name('index');
 
 
 // Route::get('/quiz', function () {
@@ -44,12 +37,17 @@ Route::get('/', function () {
 
 
 Route::prefix('/quiz')->group(function () {
-    
+
     Route::get('/', function () {
         return Inertia::render('Quiz');
     })->middleware(['auth', 'verified']);
 
     Route::post('/addQuestion', [QuestionFormController::class, 'addQuestion']);
+
+    Route::get('/editQuestion/{id}', [QuestionFormController::class, 'editQuestion']);
+
+    Route::get('/showQuestion/{id}', [QuestionFormController::class, 'showQuestion']);
+
 });
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');

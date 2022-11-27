@@ -5,6 +5,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import Navbar from '@/Components/Navbar.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 
@@ -29,9 +30,7 @@ const submit = () => {
 <template>
 
 
-    <ResponsiveNavLink :href="route('register')" method="get" as="button">
-        Register
-    </ResponsiveNavLink>
+    <Navbar />
 
     <GuestLayout>
 
