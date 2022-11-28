@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Question;
 use App\Models\QuestionForm;
 use App\Models\User;
+use App\Models\UserAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -130,6 +131,13 @@ class QuestionFormController extends Controller
         $questionForm = QuestionForm::where('link', $id)->get();
         $questionsName = Question::where('question_form_id', $questionForm[0]['id'])->get();
         $answers = Question::where('question_form_id', $questionForm[0]['id'])->with('answer')->get();
+        $userAnswers = UserAnswer::get();
+
+        foreach ($userAnswers as $key => $value) {
+            if ($userAnswers[$key]['user_id'] == Auth::id()) {
+                dd($userAnswers[$key]['user_id']);
+            }
+        }
 
         // dd($answers);
 
@@ -139,13 +147,43 @@ class QuestionFormController extends Controller
             'questionsName' => $questionsName,
             'answers' => $answers
         ]);
+    }
+
+    public function addAnswer(Request $request)
+    {
 
 
+        // $questionsName = Question::where('id', $request['questionsName'][1]['id'])->get('correct_answer');
+
+        // dd($questionsName[0]['correct_answer']);
+        // dd($request['questionsName'][0]['id']);
+
+
+
+
+        foreach ($request['questionsName'] as $key => $value) {
+            // dd($key);
+
+            $questionsName = Question::where('id', $request['questionsName'][$key]['id'])->get();
+
+
+
+            $answerForm = new UserAnswer();
+            $answerForm->user_id = Auth::id();
+            $answerForm->question_form_id = $value['question_form_id'];
+            $answerForm->name = $value['name'];
+            $answerForm->correct_answer = $questionsName[0]['correct_answer'];
+            $answerForm->user_answer =  $value['correct_answer'];
+            $answerForm->save();
+
+        }
+
+        return Redirect::route('index');
     }
 
 
 
-     // public function show()
+    // public function show()
     // {
     //     $userComments = User::findOrFail('1')->questionForms()->get(['name']);
     //     return view('index', compact('userComments'));

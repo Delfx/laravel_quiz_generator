@@ -4,6 +4,7 @@ use App\Http\Controllers\QuestionFormController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use PhpParser\Builder\Class_;
 use PhpParser\Node\Expr\PostDec;
 
 /*
@@ -44,11 +45,15 @@ Route::prefix('/quiz')->group(function () {
 
     Route::post('/addQuestion', [QuestionFormController::class, 'addQuestion']);
 
+    Route::post('/addAnswer', [QuestionFormController::class, 'addAnswer']);
+
     Route::get('/editQuestion/{id}', [QuestionFormController::class, 'editQuestion']);
 
     Route::get('/showQuestion/{id}', [QuestionFormController::class, 'showQuestion']);
 
 });
+
+
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
