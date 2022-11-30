@@ -47,11 +47,14 @@ Route::prefix('/quiz')->group(function () {
 
     Route::post('/addAnswer', [QuestionFormController::class, 'addAnswer']);
 
-    Route::get('/editQuestion/{id}', [QuestionFormController::class, 'editQuestion']);
+    Route::get('/editQuestion/{id}', [QuestionFormController::class, 'editQuestion'])->middleware(['auth', 'verified']);
 
-    Route::get('/showQuestion/{id}', [QuestionFormController::class, 'showQuestion']);
+    Route::get('/showQuestion/{id}', [QuestionFormController::class, 'showQuestion'])->middleware(['auth', 'verified']);
+
+    Route::get('/showResults/{id}', [QuestionFormController::class, 'showResults'])->middleware(['auth', 'verified']);
 
 });
+
 
 
 // Route::get('/dashboard', function () {

@@ -5,8 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserAnswer extends Model
+class UserQuizEntry extends Model
 {
+
+    /**
+     * Get all of the comments for the UserQuizEntry
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userAnswers()
+    {
+        return $this->hasMany(UserAnswer::class);
+    }
 
     public function user()
     {
@@ -16,11 +26,6 @@ class UserAnswer extends Model
     public function quizForm()
     {
         return $this->belongsTo(QuizForm::class);
-    }
-
-    public function question()
-    {
-        return $this->belongsTo(Question::class);
     }
 
     use HasFactory;

@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('user_answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('question_form_id')->constrained();
+            $table->foreignId('user_quiz_entry_id')->constrained();
             $table->text('name');
             $table->integer('correct_answer');
             $table->integer('user_answer');

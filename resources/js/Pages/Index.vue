@@ -7,7 +7,7 @@ defineProps({
     canRegister: Boolean,
     laravelVersion: String,
     phpVersion: String,
-    allQuestionsFormsName: Array,
+    allQuizForms: Array,
     allQuestions: Array
 })
 
@@ -25,7 +25,7 @@ defineProps({
         <Link href="/quiz" class="btn btn-success mb-4">Create quiz</Link>
 
         <div v-if="$page.props.auth.user">
-            <div v-for="(formName, index) in allQuestionsFormsName" :key="index">
+            <div v-for="(formName, index) in allQuizForms" :key="index">
                 <div class="card mt-3 col-md-8 d-flex mx-auto">
                     <div class="card-header">
                         {{ formName.name }}
@@ -36,7 +36,9 @@ defineProps({
                         <a class="card-text" :href="`quiz/showQuestion/${formName.link}`">
                             <p class="card-text">Link:  {{`quiz/showQuestion/${formName.link}`}}</p>
                         </a>
-                        <a :href="`quiz/editQuestion/${formName.id}`" class="btn btn-primary mt-3">Edit</a>
+                        <a :href="`quiz/editQuestion/${formName.id}`" class="btn btn-primary">Edit</a>
+
+                        <a :href="`quiz/showResults/${formName.id}`" class="btn btn-primary m-2">Show Results</a>
                     </div>
                 </div>
             </div>

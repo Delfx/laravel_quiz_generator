@@ -5,13 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class QuestionForm extends Model
+class QuizForm extends Model
 {
-    use HasFactory;
 
     public function questions()
     {
         return $this->hasMany(Question::class);
+    }
+
+    public function userAnswers()
+    {
+        return $this->hasMany(UserAnswer::class);
     }
 
     public function user()
@@ -20,4 +24,5 @@ class QuestionForm extends Model
     }
 
 
+    use HasFactory;
 }

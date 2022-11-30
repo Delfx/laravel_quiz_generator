@@ -9,9 +9,9 @@ defineProps({
     errors: Object,
 })
 
-const questionFormName = ref('Dogs');
+const quizFormName = ref('Dogs');
 
-const questions = ref([
+const quizQuestions = ref([
     {
         question: 'Are you a good boy?',
         trueAnswer: '0',
@@ -34,9 +34,9 @@ const questions = ref([
     }
 ])
 
-function addQuestions() {
+function addQuestion() {
 
-    questions.value.push({
+    quizQuestions.value.push({
         question: '',
         trueAnswer: '',
         answers: ['',
@@ -47,17 +47,17 @@ function addQuestions() {
 }
 
 function addAnswer(index) {
-    questions.value[index].answers.push('')
+    quizQuestions.value[index].answers.push('')
 }
 
 function removeQuestions(index) {
-    questions.value.splice(index, 1)
+    quizQuestions.value.splice(index, 1)
 }
 
 function submit() {
     const data = {
-        questionsFormName: questionFormName.value,
-        questions: questions.value
+        quizFormName: quizFormName.value,
+        quizQuestions: quizQuestions.value
     }
     Inertia.post('/quiz/addQuestion', data, {
         preserveState: true,
@@ -96,40 +96,40 @@ function submit() {
 
             <div class="form-group col-md-12 m-2">
                 <label class="m-1">Question Form name</label>
-                <input v-model="questionFormName" :name="`questionFormName.value`" type="text" class="form-control"
+                <input v-model="quizFormName" :name="`quizFormName.value`" type="text" class="form-control"
                     placeholder="Question Form name">
-                <div v-if="errors.questionsFormName" class="tw-mt-3 alert alert-danger" role="alert">
-                    {{ errors.questionsFormName }}
+                <div v-if="errors.quizFormName" class="tw-mt-3 alert alert-danger" role="alert">
+                    {{ errors.quizFormName }}
                 </div>
             </div>
 
             <div class="question-maker">
-                <div class=" mt-4 " v-for="(question, index) in questions" :key="index">
+                <div class=" mt-4 " v-for="(question, index) in quizQuestions" :key="index">
                     <div class="form-group col-md-12 m-2">
                         <label class="m-1">Question name</label>
-                        <input v-model="question.question" :name="`questions[${index}][question]`" type="text"
+                        <input v-model="question.question" :name="`quizQuestions[${index}][question]`" type="text"
                             class="form-control" placeholder="Question name">
-                        <div v-if="errors[`questions.${index}.question`]" class="tw-mt-3 alert alert-danger"
+                        <div v-if="errors[`quizQuestions.${index}.question`]" class="tw-mt-3 alert alert-danger"
                             role="alert">
-                            {{ errors[`questions.${index}.question`] }}
+                            {{ errors[`quizQuestions.${index}.question`] }}
                         </div>
                     </div>
 
-                    <div v-for="(answer, indexAnswer) in questions[index].answers" :key="indexAnswer">
+                    <div v-for="(answer, indexAnswer) in quizQuestions[index].answers" :key="indexAnswer">
                         <div class="form-group col-md-12 m-2">
                             <div class="input-group">
                                 <div class="input-group-text">
                                     <input :value="indexAnswer" class="form-check-input mt-0" type="radio"
-                                        v-model="questions[index].trueAnswer"
+                                        v-model="quizQuestions[index].trueAnswer"
                                         aria-label="Radio button for following text input">
                                 </div>
-                                <input v-model="questions[index].answers[indexAnswer]"
-                                    :name="`questions[${index}][answers][${indexAnswer}]`" type="text"
+                                <input v-model="quizQuestions[index].answers[indexAnswer]"
+                                    :name="`quizQuestions[${index}][answers][${indexAnswer}]`" type="text"
                                     class="form-control" aria-label="Answer" placeholder="Answer Form name">
                             </div>
-                            <div v-if="errors[`questions.${index}.answers.${indexAnswer}`]"
+                            <div v-if="errors[`quizQuestions.${index}.answers.${indexAnswer}`]"
                                 class="tw-mt-3 alert alert-danger" role="alert">
-                                {{ errors[`questions.${index}.answers.${indexAnswer}`] }}
+                                {{ errors[`quizQuestions.${index}.answers.${indexAnswer}`] }}
                             </div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ function submit() {
             </div>
 
             <div class="form-group mt-3">
-                <button @click="addQuestions" type="button" class="btn btn-secondary">Add new question</button>
+                <button @click="addQuestion" type="button" class="btn btn-secondary">Add new question</button>
             </div>
 
             <hr>
