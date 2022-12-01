@@ -34,12 +34,15 @@ function deleteQuestion(quizId) {
 
         <Link href="/quiz" class="btn btn-success m-2">Create quiz</Link>
 
+        <div v-if="(allQuizForms.length == 0)">
+            <h1 class="mt-3">
+                Create your first Quiz
+            </h1>
+        </div>
+
+
         <div v-if="$page.props.auth.user">
             <div v-for="(formName, index) in allQuizForms" :key="index">
-
-                <div>
-                    {{formName}}
-                </div>
 
                 <div class="card mt-3 col-md-8 d-flex mx-auto">
                     <div class="card-header">
@@ -48,14 +51,15 @@ function deleteQuestion(quizId) {
                     <div class="card-body">
                         <h3 class="card-title">{{ formName.name }}</h3>
                         <p class="card-text m-0 p-0">Questions in form: {{ allQuestions[index].questions.length }}</p>
-                        <a class="card-text" :href="`quiz/showQuestion/${formName.link}`">
-                            <p class="card-text">Link: {{ `quiz/showQuestion/${formName.link}` }}</p>
-                        </a>
+                        <div class="mt-2 mb-2">
+                            <h6 class="m-0">Link:</h6>
+                            <a class="card-text" :href="`quiz/showQuestion/${formName.link}`">
+                                <p class="card-text">{{ `quiz/showQuestion/${formName.link}` }}</p>
+                            </a>
+                        </div>
 
-                        <a :href="`quiz/showResults/${formName.id}`" class="btn btn-warning m-1">Show Results</a>
-
+                        <a :href="`quiz/showResults/${formName.id}`" class="btn btn-warning">Show Results</a>
                         <button @click="deleteQuestion(formName.id)" class="btn btn-danger m-1">Delete</button>
-
                         <button :href="`quiz/editQuestion/${formName.user_id}`" class="btn btn-primary m-1"
                             disabled>Edit</button>
 

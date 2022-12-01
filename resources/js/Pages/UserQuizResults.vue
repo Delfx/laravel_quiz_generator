@@ -34,6 +34,12 @@ function countAnswersNumber(index) {
 
     <div class="container">
 
+        <div v-if="(props.allQuestions.length == 0)">
+            <h3 class="mt-5">
+                Sorry you do not solve any Quiz
+            </h3>
+        </div>
+
         <div v-for="(item, index) in allQuestions" :key="item.id">
 
 

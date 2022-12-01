@@ -16,8 +16,8 @@ const quizQuestions = ref([
         question: 'Are you a good boy?',
         trueAnswer: '0',
         answers: [
-            'YES',
-            'NO',
+            'Yes',
+            'No',
             'Maybe'
         ]
 
@@ -26,8 +26,8 @@ const quizQuestions = ref([
         question: 'Labrador best human friend?',
         trueAnswer: '0',
         answers: [
-            'yes',
-            'NO',
+            'Yes',
+            'No',
             'Maybe'
         ]
 

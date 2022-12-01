@@ -56,10 +56,6 @@ function submit() {
 
                 <div v-for="(questionName, index) in answers.questionsName" :key="index">
 
-                    <h1>
-                        {{ questionName.correct_answer }}
-                    </h1>
-
                     <div class="card mt-3" style="width: 25rem;">
                         <div class="card-body">
 

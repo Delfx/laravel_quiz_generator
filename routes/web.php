@@ -44,11 +44,13 @@ Route::prefix('/quiz')->group(function () {
         return Inertia::render('Quiz');
     })->middleware(['auth', 'verified']);
 
-    Route::post('/addQuestion', [QuestionFormController::class, 'addQuestion']);
+    Route::post('/addQuestion', [QuestionFormController::class, 'addQuestion'])->middleware(['auth', 'verified']);
 
-    Route::post('/addAnswer', [QuestionFormController::class, 'addAnswer']);
+    Route::post('/addAnswer', [QuestionFormController::class, 'addAnswer'])->middleware(['auth', 'verified']);
 
-    Route::delete('/deleteQuestion/{id}', [QuestionFormController::class, 'deleteQuestion'])->name('deleteQuestion');
+    Route::delete('/deleteQuestion/{id}', [QuestionFormController::class, 'deleteQuestion'])->middleware(['auth', 'verified'])->name('deleteQuestion');
+
+    Route::delete('/deleteAnswer/{id}', [QuestionFormController::class, 'deleteAnswer'])->middleware(['auth', 'verified'])->name('deleteAnswer');
 
     Route::get('/editQuestion/{id}', [QuestionFormController::class, 'editQuestion'])->middleware(['auth', 'verified']);
 

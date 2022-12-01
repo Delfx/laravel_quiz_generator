@@ -30,7 +30,11 @@ function countAnswersNumber(index) {
 }
 
 
+function deleteAnswer(resultId) {
 
+    Inertia.delete(route("deleteAnswer", resultId));
+
+}
 
 </script>
 
@@ -43,8 +47,13 @@ function countAnswersNumber(index) {
 
     <div class="container">
 
-        <div v-for="(item, index) in props.allQuestions" :key="item.id">
+        <div v-if="(props.allQuestions.length == 0)">
+            <h3 class="mt-5">
+                Sorry, nobody solved your Quiz
+            </h3>
+        </div>
 
+        <div v-for="(item, index) in props.allQuestions" :key="item.id">
 
             <div class="card col-md-8 d-flex mx-auto mt-4">
                 <div class="card-body">
@@ -52,8 +61,9 @@ function countAnswersNumber(index) {
                     <h3 class="card-title">{{ item.name }}</h3>
                     <p class="card-text">All questions: {{ item.user_answers.length }}</p>
                     <p class="card-text">Correct Answers: {{ countAnswersNumber(index) }}</p>
-                    <a :href="route('showQuizAnswerDetails', {userId: item.user.id, quizId: item.quiz_form_id})" class="btn btn-primary m-2">Detail Result</a>
-
+                    <a :href="route('showQuizAnswerDetails', { userId: item.user.id, quizId: item.quiz_form_id })"
+                        class="btn btn-primary">Detail Result</a>
+                    <button @click="deleteAnswer(item.id)" class="btn btn-danger m-2">Delete</button>
                 </div>
             </div>
         </div>

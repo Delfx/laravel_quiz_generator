@@ -191,33 +191,27 @@ class QuestionFormController extends Controller
     {
 
         $quizForm = QuizForm::where('id', $id);
-
-
-
         $userQuizEntries = UserQuizEntry::where('quiz_form_id', ($quizForm->get())[0]['id']);
 
-        // dd(($quizForm->get())[0]['id']);
-
-
         foreach ($userQuizEntries->get() as $key => $value) {
-
             $userAnswers = UserAnswer::where('user_quiz_entry_id', $value['id'])->delete();
-
-            // dd($userAnswers);
         }
 
         $userQuizEntries->delete();
-
         $questions = Question::where('quiz_form_id', ($quizForm->get())[0]['id']);
 
         foreach ($questions->get() as $key => $value) {
-            // dd($value['id']);
             $answers = Answer::where('question_id', $value['id'])->delete();
         }
-
+        
         $questions->delete();
-
         $quizForm->delete();
+    }
 
+    public function deleteAnswer($id)
+    {
+        $userQuizEntries = UserQuizEntry::where('id', $id);
+        $userAnswers = UserAnswer::where('user_quiz_entry_id', (($userQuizEntries->get())[0]['id']))->delete();
+        $userQuizEntries->delete();
     }
 }
