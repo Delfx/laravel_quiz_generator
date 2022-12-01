@@ -125,35 +125,34 @@ class QuestionFormController extends Controller
     {
         $questionForm = UserQuizEntry::where('quiz_form_id', $request['questionsName'][0]['quiz_form_id'])->get();
 
-
-
-        if ($questionForm->isEmpty()) {
-
-            $userEntry = new UserQuizEntry();
-            $userEntry->user_id = Auth::id();
-            $userEntry->quiz_form_id = $request['questionsName'][0]['quiz_form_id'];
-            $userEntry->name = Auth::user()['name'];
-            $userEntry->save();
-
-            foreach ($request['questionsName'] as $key => $value) {
-
-                $questionsName = Question::where('id', $request['questionsName'][$key]['id'])->get();
-                $answerForm = new UserAnswer();
-                $answerForm->user_quiz_entry_id = $userEntry['id'];
-                $answerForm->name = $value['name'];
-                $answerForm->correct_answer = $questionsName[0]['correct_answer'];
-                if ($value['correct_answer'] === null) {
-                    $answerForm->user_answer = '3';
-                } else {
-                    $answerForm->user_answer =  $value['correct_answer'];
-                }
-                $answerForm->save();
+        if (!$questionForm->isEmpty()) {
+            if ($questionForm[0]['user_id'] == Auth::id()) {
+                abort(403, 'Unauthorized action.');
             }
-
-            return Redirect::route('index');
-        } elseif ($questionForm[0]['user_id'] == Auth::id()) {
-            abort(403, 'Unauthorized action.');
         }
+
+        $userEntry = new UserQuizEntry();
+        $userEntry->user_id = Auth::id();
+        $userEntry->quiz_form_id = $request['questionsName'][0]['quiz_form_id'];
+        $userEntry->name = Auth::user()['name'];
+        $userEntry->save();
+
+        foreach ($request['questionsName'] as $key => $value) {
+
+            $questionsName = Question::where('id', $request['questionsName'][$key]['id'])->get();
+            $answerForm = new UserAnswer();
+            $answerForm->user_quiz_entry_id = $userEntry['id'];
+            $answerForm->name = $value['name'];
+            $answerForm->correct_answer = $questionsName[0]['correct_answer'];
+            if ($value['correct_answer'] === null) {
+                $answerForm->user_answer = '3';
+            } else {
+                $answerForm->user_answer =  $value['correct_answer'];
+            }
+            $answerForm->save();
+        }
+
+        return Redirect::route('index');
     }
 
     public function showResults($id)
@@ -203,7 +202,7 @@ class QuestionFormController extends Controller
         foreach ($questions->get() as $key => $value) {
             $answers = Answer::where('question_id', $value['id'])->delete();
         }
-        
+
         $questions->delete();
         $quizForm->delete();
     }
