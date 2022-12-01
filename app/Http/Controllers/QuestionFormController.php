@@ -10,15 +10,9 @@ use App\Models\UserAnswer;
 use App\Models\UserQuizEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Mockery\Undefined;
-use Nette\Utils\Strings;
-use Ramsey\Uuid\Type\Integer;
-use Termwind\Components\Dd;
+
 
 use function GuzzleHttp\Promise\all;
 
@@ -32,8 +26,11 @@ class QuestionFormController extends Controller
         return $allQuestion;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+
+
+
         $questionForm = QuizForm::where('user_id', Auth::id())->with('Questions')->get();
 
         return Inertia::render('Index',  [
@@ -95,34 +92,6 @@ class QuestionFormController extends Controller
         $allAnswers = Question::where('quiz_form_id', $id)->with('Answer')->get();
 
 
-        // return Inertia::render('Quiz', [
-
-        //     'allQuestionsFormsName' => $allQuestionsFormsName,
-        //     'allQuestions' => $this->allQuestion($QuestionForm->id)
-
-        // ]);
-
-
-        // with('Questions')->get();
-
-
-
-        // $validated = $request->validate(
-        //     [
-        //         'questionsFormName' => 'required|max:255',
-        //         'questions.*.question' => 'required|max:255',
-        //         'questions.*.answers.*' => 'required|max:255'
-        //     ],
-        //     [
-        //         'questionsFormName.required' => 'Please fill Question Form name field',
-        //         'questions.*.question.required' => 'Please fill Question name field',
-        //         'questions.*.answers.*.required' => 'Please fill Answers field',
-        //     ]
-        // );
-
-        // dd($allQuestions);
-
-
         return Inertia::render('EditQuiz', [
             'questions' => $allQuestions
         ]);
@@ -154,35 +123,37 @@ class QuestionFormController extends Controller
 
     public function addAnswer(Request $request)
     {
+        $questionForm = UserQuizEntry::where('quiz_form_id', $request['questionsName'][0]['quiz_form_id'])->get();
 
 
-        // $questionsName = Question::where('id', $request['questionsName'][1]['id'])->get('correct_answer');
 
-        // dd($questionsName[0]['correct_answer']);
-        // dd($request['questionsName'][0]['id']);
-        // dd(Auth::user()['name']);
+        if ($questionForm->isEmpty()) {
 
-        $userEntry = new UserQuizEntry();
-        $userEntry->user_id = Auth::id();
-        $userEntry->quiz_form_id = $request['questionsName'][0]['quiz_form_id'];
-        $userEntry->name = Auth::user()['name'];
-        $userEntry->save();
+            $userEntry = new UserQuizEntry();
+            $userEntry->user_id = Auth::id();
+            $userEntry->quiz_form_id = $request['questionsName'][0]['quiz_form_id'];
+            $userEntry->name = Auth::user()['name'];
+            $userEntry->save();
 
-        foreach ($request['questionsName'] as $key => $value) {
-            $questionsName = Question::where('id', $request['questionsName'][$key]['id'])->get();
-            $answerForm = new UserAnswer();
-            $answerForm->user_quiz_entry_id = $userEntry['id'];
-            $answerForm->name = $value['name'];
-            $answerForm->correct_answer = $questionsName[0]['correct_answer'];
-            if ($value['correct_answer'] == null) {
-                $answerForm->user_answer = '3';
-            }else{
-                $answerForm->user_answer =  $value['correct_answer'];
+            foreach ($request['questionsName'] as $key => $value) {
+
+                $questionsName = Question::where('id', $request['questionsName'][$key]['id'])->get();
+                $answerForm = new UserAnswer();
+                $answerForm->user_quiz_entry_id = $userEntry['id'];
+                $answerForm->name = $value['name'];
+                $answerForm->correct_answer = $questionsName[0]['correct_answer'];
+                if ($value['correct_answer'] === null) {
+                    $answerForm->user_answer = '3';
+                } else {
+                    $answerForm->user_answer =  $value['correct_answer'];
+                }
+                $answerForm->save();
             }
-            $answerForm->save();
-        }
 
-        return Redirect::route('index');
+            return Redirect::route('index');
+        } elseif ($questionForm[0]['user_id'] == Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
     }
 
     public function showResults($id)
@@ -190,37 +161,63 @@ class QuestionFormController extends Controller
 
         $userId = QuizForm::where('id', $id)->get('user_id');
 
-        // dd($userId->count());
-
         if ($userId->count() == 0) {
             abort(403, 'Unauthorized action.');
-        }elseif($userId[0]['user_id'] !== Auth::id()){
+        } elseif ($userId[0]['user_id'] !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-
-        // DB::enableQueryLog();
-        // $questionForm = QuizForm::where('user_id', Auth::id())->with('Questions')->where('id', $id)->with('userAnswers')->with('user')->get();
-
         $questionForm = UserQuizEntry::where('quiz_form_id', $id)->with('userAnswers')->with('user')->get();
-        // $questionForm = User::where('id', Auth::id())->get();
-        // dd(DB::getQueryLog());
-
-        // dd($questionForm);
-
 
         return Inertia::render('QuizResults',  [
-            // 'allQuizForms' => QuizForm::where('user_id', Auth::id())->get(),
             'allQuestions' => $questionForm
         ]);
     }
 
+    public function showQuizAnswerDetails(Request $request, $userId, $quizId)
+    {
+        $answerForm = UserQuizEntry::where('quiz_form_id', $quizId)->where('user_id', $userId)->with('userAnswers')->with('quizForm')->with('user')->get();
+        $answers = Question::where('quiz_form_id', $answerForm[0]['quiz_form_id'])->with('answer')->get();
+
+        return Inertia::render('QuizDetailResults', [
+            // 'formName' => $questionForm[0]['name'],
+            'questionForm' => $answerForm,
+            'answers' => $answers,
+            'previous_url' => $request->session()->get('_previous')['url']
+        ]);
+    }
+
+    public function deleteQuestion(Request $request, $id)
+    {
+
+        $quizForm = QuizForm::where('id', $id);
 
 
-    // public function show()
-    // {
-    //     $userComments = User::findOrFail('1')->questionForms()->get(['name']);
-    //     return view('index', compact('userComments'));
-    // }
 
+        $userQuizEntries = UserQuizEntry::where('quiz_form_id', ($quizForm->get())[0]['id']);
+
+        // dd(($quizForm->get())[0]['id']);
+
+
+        foreach ($userQuizEntries->get() as $key => $value) {
+
+            $userAnswers = UserAnswer::where('user_quiz_entry_id', $value['id'])->delete();
+
+            // dd($userAnswers);
+        }
+
+        $userQuizEntries->delete();
+
+        $questions = Question::where('quiz_form_id', ($quizForm->get())[0]['id']);
+
+        foreach ($questions->get() as $key => $value) {
+            // dd($value['id']);
+            $answers = Answer::where('question_id', $value['id'])->delete();
+        }
+
+        $questions->delete();
+
+        $quizForm->delete();
+
+    }
 }

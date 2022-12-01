@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\QuestionFormController;
+use App\Http\Controllers\UserAnswerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,14 +48,24 @@ Route::prefix('/quiz')->group(function () {
 
     Route::post('/addAnswer', [QuestionFormController::class, 'addAnswer']);
 
+    Route::delete('/deleteQuestion/{id}', [QuestionFormController::class, 'deleteQuestion'])->name('deleteQuestion');
+
     Route::get('/editQuestion/{id}', [QuestionFormController::class, 'editQuestion'])->middleware(['auth', 'verified']);
 
     Route::get('/showQuestion/{id}', [QuestionFormController::class, 'showQuestion'])->middleware(['auth', 'verified']);
 
     Route::get('/showResults/{id}', [QuestionFormController::class, 'showResults'])->middleware(['auth', 'verified']);
 
+    Route::get('/answerDetailResults/{userId}/{quizId}', [QuestionFormController::class, 'showQuizAnswerDetails'])->middleware(['auth', 'verified'])->name('showQuizAnswerDetails');
+
+
 });
 
+
+Route::prefix('/user')->group(function () {
+
+    Route::get('/allAnswers', [UserAnswerController::class, 'allAnswers'])->middleware(['auth', 'verified'])->name('allAnswers');
+});
 
 
 // Route::get('/dashboard', function () {

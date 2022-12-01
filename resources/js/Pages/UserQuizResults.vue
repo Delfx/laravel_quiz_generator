@@ -4,16 +4,10 @@ import { Inertia } from '@inertiajs/inertia'
 import Navbar from '@/Components/Navbar.vue';
 
 
+
 const props = defineProps({
-
-    allQuizForms: Array,
     allQuestions: Array
-
 })
-
-// let correctAnswersNumbers = []
-// let userAnswersNumbers = []
-
 
 
 function countAnswersNumber(index) {
@@ -26,11 +20,8 @@ function countAnswersNumber(index) {
         }
     })
 
-    return matches.length;
+    return matches.length
 }
-
-
-
 
 </script>
 
@@ -43,23 +34,20 @@ function countAnswersNumber(index) {
 
     <div class="container">
 
-        <div v-for="(item, index) in props.allQuestions" :key="item.id">
+        <div v-for="(item, index) in allQuestions" :key="item.id">
 
 
             <div class="card col-md-8 d-flex mx-auto mt-4">
                 <div class="card-body">
-                    <h5 class="m-0" style="font-size: 0.8rem;">User:</h5>
-                    <h3 class="card-title">{{ item.name }}</h3>
-                    <p class="card-text">All questions: {{ item.user_answers.length }}</p>
+                    <h5 class="m-0" style="font-size: 0.8rem;">Quiz:</h5>
+                    <h3 class="card-title">{{ item.quiz_form.name }}</h3>
+                    <p class="card-text m-0">All Questions: {{ item.user_answers.length }}</p>
                     <p class="card-text">Correct Answers: {{ countAnswersNumber(index) }}</p>
-                    <a :href="route('showQuizAnswerDetails', {userId: item.user.id, quizId: item.quiz_form_id})" class="btn btn-primary m-2">Detail Result</a>
-
+                    <a :href="route('showQuizAnswerDetails', { userId: item.user_id, quizId: item.quiz_form.id })"
+                        class="btn btn-primary m-2">Detail Result</a>
                 </div>
             </div>
         </div>
     </div>
-
-
-
 
 </template>

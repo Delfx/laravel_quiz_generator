@@ -1,4 +1,3 @@
--- Active: 1669226883728@@127.0.0.1@3306@laravel
 <script setup>
 import Navbar from '@/Components/Navbar.vue';
 import { Inertia } from '@inertiajs/inertia'

@@ -1,5 +1,6 @@
 <script setup>
 import Navbar from '@/Components/Navbar.vue';
+import { Inertia } from '@inertiajs/inertia'
 import { Head, Link } from '@inertiajs/inertia-vue3';
 
 defineProps({
@@ -10,6 +11,15 @@ defineProps({
     allQuizForms: Array,
     allQuestions: Array
 })
+
+function deleteQuestion(quizId) {
+
+    // console.log(id);
+
+
+    Inertia.delete(route("deleteQuestion", quizId));
+
+}
 
 </script>
 
@@ -22,10 +32,15 @@ defineProps({
 
     <div class="container mt-5">
 
-        <Link href="/quiz" class="btn btn-success mb-4">Create quiz</Link>
+        <Link href="/quiz" class="btn btn-success m-2">Create quiz</Link>
 
         <div v-if="$page.props.auth.user">
             <div v-for="(formName, index) in allQuizForms" :key="index">
+
+                <div>
+                    {{formName}}
+                </div>
+
                 <div class="card mt-3 col-md-8 d-flex mx-auto">
                     <div class="card-header">
                         {{ formName.name }}
@@ -34,11 +49,16 @@ defineProps({
                         <h3 class="card-title">{{ formName.name }}</h3>
                         <p class="card-text m-0 p-0">Questions in form: {{ allQuestions[index].questions.length }}</p>
                         <a class="card-text" :href="`quiz/showQuestion/${formName.link}`">
-                            <p class="card-text">Link:  {{`quiz/showQuestion/${formName.link}`}}</p>
+                            <p class="card-text">Link: {{ `quiz/showQuestion/${formName.link}` }}</p>
                         </a>
-                        <a :href="`quiz/editQuestion/${formName.id}`" class="btn btn-primary">Edit</a>
 
-                        <a :href="`quiz/showResults/${formName.id}`" class="btn btn-primary m-2">Show Results</a>
+                        <a :href="`quiz/showResults/${formName.id}`" class="btn btn-warning m-1">Show Results</a>
+
+                        <button @click="deleteQuestion(formName.id)" class="btn btn-danger m-1">Delete</button>
+
+                        <button :href="`quiz/editQuestion/${formName.user_id}`" class="btn btn-primary m-1"
+                            disabled>Edit</button>
+
                     </div>
                 </div>
             </div>

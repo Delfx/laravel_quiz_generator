@@ -30,6 +30,12 @@ const props = defineProps([
                                 Log Out
                             </ResponsiveNavLink>
                         </li>
+
+                        <li class="nav-item">
+                            <ResponsiveNavLink :href="route('allAnswers')" method="get" as="button">
+                                Solved quiz
+                            </ResponsiveNavLink>
+                        </li>
                     </ul>
                 </div>
             </div>

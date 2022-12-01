@@ -18,6 +18,11 @@ class UserQuizEntry extends Model
         return $this->hasMany(UserAnswer::class);
     }
 
+    public function answer()
+    {
+        return $this->belongsTo(Answer::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -27,6 +32,7 @@ class UserQuizEntry extends Model
     {
         return $this->belongsTo(QuizForm::class);
     }
+
 
     use HasFactory;
 }
