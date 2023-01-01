@@ -15,8 +15,6 @@ defineProps({
 function deleteQuestion(quizId) {
 
     // console.log(id);
-
-
     Inertia.delete(route("deleteQuestion", quizId));
 
 }
@@ -42,6 +40,16 @@ function deleteQuestion(quizId) {
 
 
         <div v-if="$page.props.auth.user">
+
+            <div v-if="$page.props.auth.user" class="mt-3 col-md-8 d-flex mx-auto">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search" aria-label="Search"
+                        aria-describedby="button-addon2">
+                    <!-- <button class="btn btn-outline-primary" type="button" id="button-addon2">Search</button> -->
+                </div>
+            </div>
+
+
             <div v-for="(formName, index) in allQuizForms" :key="index">
 
                 <div class="card mt-3 col-md-8 d-flex mx-auto">

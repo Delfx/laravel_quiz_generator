@@ -28,9 +28,6 @@ class QuestionFormController extends Controller
 
     public function index(Request $request)
     {
-
-
-
         $questionForm = QuizForm::where('user_id', Auth::id())->with('Questions')->get();
 
         return Inertia::render('Index',  [
